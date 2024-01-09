@@ -11,18 +11,29 @@ on:
     types: [opened, reopened, synchronize]
     branches:
     - develop
-    
-jobs:        
+
+jobs:
+  get_actor:
+    runs-on: ubuntu-latest
+    outputs:
+      actor: ${{ steps.actor.outputs.actor }}
+    steps:
+      - name: actor
+        run: |
+          ACTOR=$(git log -1 --pretty=format:'%an')
+          echo "actor=$ACTOR" >> $GITHUB_OUTPUT
+
   test_actor:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.commits[0].message, '[skip-ci]') && github.actor != 'gitbot'"
+    needs: [get_actor]
+    if: "!contains(github.event.commits[0].message, '[skip-ci]') && needs.get_actor.outputs.actor != 'gitbot'"
     steps:
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.EDGARPAT }}
       - name: actor
         run: |
-          echo "actor is: ${GITHUB_ACTOR}"
+          echo "actor is: ${{needs.get_actor.outputs.actor}}"
       - name: echoing
         run: |
           echo "$(date)" > VERSION
