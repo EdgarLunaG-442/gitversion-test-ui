@@ -15,7 +15,7 @@ on:
 jobs:        
   test_actor:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.commits[0].message, [skip-ci]) && github.actor != 'github\[bot\]'"
+    if: "!contains(github.event.commits[0].message, [skip-ci]) && github.actor != 'gitbot'"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,6 +27,6 @@ jobs:
         run: |
           echo "{{ needs.calculate-version.outputs.version }}" > VERSION
           git config --local user.email "gitbot@github.com"
-          git config --local user.name "github[bot]"
+          git config --local user.name "gitbot"
           git commit -m "update version files [skip-ci]" -a
           git push
