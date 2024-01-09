@@ -20,7 +20,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
         with: 
-      	  token: {{secrets.EDGARPAT}}
+      	  token: ${{secrets.EDGARPAT}}
       - name: actor
         run: |
     	  echo "$GITHUB_ACTOR"
