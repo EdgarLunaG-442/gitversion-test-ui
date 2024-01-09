@@ -15,23 +15,29 @@ env:
   SKIP_CI_MESSAGE: '[skip-ci]'
   SKIP_CI_ACTOR: 'gitbot'
 jobs:
-  get_actor:
+  prepare_envs:
     runs-on: ubuntu-latest
     outputs:
-      actor: ${{ steps.actor.outputs.actor }}
+      actual_actor: ${{ steps.get_envs.outputs.actual_actor }}
+      skip_ci_message: ${{ steps.get_envs.outputs.skip_ci_message }}
+      skip_ci_actor: ${{ steps.get_envs.outputs.skip_ci_actor }}
     steps:
       - uses: actions/checkout@v2
-      - name: actor
-        id: actor
+      - name: get_envs
+        id: get_envs
         run: |
-          ACTOR=$(git log -1 --pretty=format:'%an')
-          echo "$ACTOR"
-          echo "actor=$ACTOR" >> $GITHUB_OUTPUT
+          ACTUAL_ACTOR=$(git log -1 --pretty=format:'%an')
+          echo "$ACTUAL_ACTOR"
+          echo "$SKIP_CI_MESSAGE"
+          echo "$SKIP_CI_ACTOR"
+          echo "actual_actor=$ACTUAL_ACTOR" >> $GITHUB_OUTPUT
+          echo "skip_ci_message=$SKIP_CI_MESSAGE" >> $GITHUB_OUTPUT
+          echo "skip_ci_actor=$SKIP_CI_ACTOR" >> $GITHUB_OUTPUT
 
   test_actor:
     runs-on: ubuntu-latest
-    needs: [get_actor]
-    if: ${{ !(contains(github.event.commits[0].message, env.SKIP_CI_MESSAGE) && needs.get_actor.outputs.actor != env.SKIP_CI_ACTOR }}
+    needs: [prepare_envs]
+    if: "!(contains(github.event.commits[0].message, needs.prepare_envs.outputs.skip_ci_message) || needs.prepare_envs.outputs.skip_ci_actor == needs.prepare_envs.outputs.actual_actor)"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -39,7 +45,7 @@ jobs:
       - name: actor
         run: |
           echo "actor to ignore is: $SKIP_CI_ACTOR"
-          echo "actor is: ${{needs.get_actor.outputs.actor}}"
+          echo "actor is: ${{needs.prepare_envs.outputs.actor}}"
       - name: echoing
         run: |
           echo "$(date)" > VERSION
