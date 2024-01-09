@@ -14,18 +14,17 @@ on:
     
 jobs:        
   test_actor:
-    uses: ubuntu-latest
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.commits[0].message, '[skip-ci]') && ${{ github.actor != 'github[bot]' }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with: 
-      	  token: ${{ secrets.EDGARPAT }}
-      - name: actor
-        run: |
+     - uses: actions/checkout@v2
+       with: 
+	token: ${{ secrets.EDGARPAT }}
+     - name: actor
+       run: |
     	  echo "$GITHUB_ACTOR"
-      - name: echoing
-        run: |
+     - name: echoing
+       run: |
     	  echo "{{ needs.calculate-version.outputs.version }}" > VERSION
 	  git config --local user.email "gitbot@github.com"
 	  git config --local user.name "github[bot]"
