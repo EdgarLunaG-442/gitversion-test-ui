@@ -15,7 +15,7 @@ on:
 jobs:        
   test_actor:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.commits[0].message, [skip-ci]) && github.actor != 'gitbot'"
+    if: "!contains(github.event.commits[0].message, '[skip-ci]') && github.actor != 'gitbot'"
     steps:
       - uses: actions/checkout@v2
         with:
