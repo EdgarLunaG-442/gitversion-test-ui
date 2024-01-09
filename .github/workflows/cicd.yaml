@@ -18,6 +18,7 @@ jobs:
     outputs:
       actor: ${{ steps.actor.outputs.actor }}
     steps:
+      - uses: actions/checkout@v2
       - name: actor
         run: |
           ACTOR=$(git log -1 --pretty=format:'%an')
