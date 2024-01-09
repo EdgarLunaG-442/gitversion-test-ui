@@ -1,0 +1,33 @@
+name: CI-CD
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - feature/*
+    - develop
+    - release/*
+    - hotfix/*
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+    - develop
+    
+jobs:        
+  test_actor:
+    uses: ubuntu-latest
+    if: "!contains(github.event.commits[0].message, [skip-ci])" && ${{ github.actor != 'github[bot]' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with: 
+      	  token: {{secrets.EDGARPAT}}
+      - name: actor
+        run: |
+    	  echo "$GITHUB_ACTOR"
+      - name: echoing
+        run: |
+    	  echo "{{ needs.calculate-version.outputs.version }}" > VERSION
+	  git config --local user.email "gitbot@github.com"
+	  git config --local user.name "github[bot]"
+	  git commit -m "update version files [skip-ci]" -a
+	  git push
