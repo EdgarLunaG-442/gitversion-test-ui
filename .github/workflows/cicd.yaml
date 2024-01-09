@@ -22,11 +22,11 @@ jobs:
           token: ${{ secrets.EDGARPAT }}
       - name: actor
         run: |
-          echo "$GITHUB_ACTOR"
+          echo "actor is: ${GITHUB_ACTOR}"
       - name: echoing
         run: |
           echo "$(date)" > VERSION
           git config --local user.email "gitbot@github.com"
           git config --local user.name "gitbot"
-          git commit -m "update version files [skip-ci]" -a
+          git commit -m "update version files" -a
           git push
