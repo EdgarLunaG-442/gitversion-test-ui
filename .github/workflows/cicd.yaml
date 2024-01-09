@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: actor
+        id: actor
         run: |
           ACTOR=$(git log -1 --pretty=format:'%an')
           echo "$ACTOR"
